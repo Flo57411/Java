@@ -1,0 +1,10 @@
+com\example\todoapp\model\Task.class
+com\example\todoapp\model\TaskStatus.class
+com\example\todoapp\repository\TaskRepository.class
+com\example\todoapp\controller\HomeController.class
+com\example\todoapp\controller\UserController.class
+com\example\todoapp\TodoApplication.class
+com\example\todoapp\controller\TaskController.class
+com\example\todoapp\model\TaskPriority.class
+com\example\todoapp\model\User.class
+com\example\todoapp\repository\UserRepository.class

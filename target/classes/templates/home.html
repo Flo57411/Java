@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Application TODO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4">📋 Application TODO List</h1>
+            <p class="lead text-muted">Gérez vos tâches et vos équipes efficacement</p>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 border-primary">
+                    <div class="card-body text-center">
+                        <i class="bi bi-people-fill display-1 text-primary mb-3"></i>
+                        <h5 class="card-title">👥 Utilisateurs</h5>
+                        <p class="card-text display-6 text-primary mb-3" th:text="${userCount}">0</p>
+                        <p class="card-text text-muted">utilisateurs enregistrés</p>
+                        <div class="d-grid gap-2">
+                            <a href="/users" class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i> Voir les utilisateurs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 border-success">
+                    <div class="card-body text-center">
+                        <i class="bi bi-list-task display-1 text-success mb-3"></i>
+                        <h5 class="card-title">✅ Tâches</h5>
+                        <p class="card-text display-6 text-success mb-3" th:text="${taskCount}">0</p>
+                        <p class="card-text text-muted">tâches créées</p>
+                        <div class="d-grid gap-2">
+                            <a href="/tasks" class="btn btn-outline-success me-2">
+                                <i class="bi bi-eye"></i> Voir les tâches
+                            </a>
+                            <a href="/tasks/new" class="btn btn-success">
+                                <i class="bi bi-plus-circle"></i> Nouvelle tâche
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions rapides -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-lightning"></i> Actions rapides
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <a href="/tasks/new" class="btn btn-success w-100">
+                                    <i class="bi bi-plus-circle"></i> Créer une tâche
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/tasks" class="btn btn-info w-100">
+                                    <i class="bi bi-list-ul"></i> Lister les tâches
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/users" class="btn btn-primary w-100">
+                                    <i class="bi bi-people"></i> Gérer les utilisateurs
+                                </a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/h2-console" class="btn btn-secondary w-100" target="_blank">
+                                    <i class="bi bi-database"></i> Console H2
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informations techniques -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card bg-light">
+                    <div class="card-body text-center">
+                        <h6 class="card-title text-muted">
+                            <i class="bi bi-gear"></i> Informations techniques
+                        </h6>
+                        <p class="card-text small text-muted mb-0">
+                            Spring Boot 3.2.0 • H2 Database • Thymeleaf • Bootstrap 5
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

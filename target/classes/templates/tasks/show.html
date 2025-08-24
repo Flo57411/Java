@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Détail tâche</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Détail de la tâche</h1>
+            <div>
+                <a href="/tasks" class="btn btn-secondary me-2">
+                    <i class="bi bi-arrow-left"></i> Retour à la liste
+                </a>
+                <a th:href="@{/tasks/{id}/edit(id=${task.id})}" class="btn btn-warning me-2">
+                    <i class="bi bi-pencil"></i> Modifier
+                </a>
+                <a href="/tasks/new" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Nouvelle tâche
+                </a>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <!-- Informations principales -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="card-title mb-0" th:text="${task.title}">Titre de la tâche</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>ID :</strong> <span th:text="${task.id}">1</span></p>
+                                <p><strong>Description :</strong></p>
+                                <p class="text-muted" th:text="${task.description}">Description de la tâche</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Statut :</strong> 
+                                    <span th:class="${'badge ' + 
+                                        (task.status == 'COMPLETED' ? 'bg-success' : 
+                                         task.status == 'IN_PROGRESS' ? 'bg-warning' : 
+                                         task.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary')}"
+                                          th:text="${task.status.displayName}">En attente</span>
+                                </p>
+                                <p><strong>Priorité :</strong> 
+                                    <span th:class="${'badge ' + 
+                                        (task.priority == 'URGENT' ? 'bg-danger' : 
+                                         task.priority == 'HIGH' ? 'bg-warning' : 
+                                         task.priority == 'MEDIUM' ? 'bg-info' : 'bg-secondary')}"
+                                          th:text="${task.priority.displayName}">Moyenne</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dates et utilisateur -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Informations complémentaires</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Créée le :</strong> 
+                                    <span th:text="${#temporals.format(task.createdAt, 'dd/MM/yyyy à HH:mm')}">Date</span>
+                                </p>
+                                <p><strong>Échéance :</strong> 
+                                    <span th:if="${task.dueDate != null}" 
+                                          th:text="${#temporals.format(task.dueDate, 'dd/MM/yyyy à HH:mm')}">Échéance</span>
+                                    <span th:unless="${task.dueDate != null}" class="text-muted">Non définie</span>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Utilisateur assigné :</strong></p>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-4 me-2"></i>
+                                    <span th:text="${task.user.fullName}">Utilisateur</span>
+                                </div>
+                                <small class="text-muted" th:text="${task.user.email}">email@example.com</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <!-- Actions rapides -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Actions rapides</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Changement de statut -->
+                        <div class="mb-3">
+                            <label for="statusChange" class="form-label">Changer le statut</label>
+                            <form th:action="@{/tasks/{id}/status(id=${task.id})}" method="post">
+                                <select name="status" id="statusChange" class="form-select mb-2">
+                                    <option th:each="status : ${T(com.example.todoapp.model.TaskStatus).values()}" 
+                                            th:value="${status}" 
+                                            th:text="${status.displayName}"
+                                            th:selected="${task.status == status}">
+                                        Statut
+                                    </option>
+                                </select>
+                                <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="bi bi-arrow-clockwise"></i> Mettre à jour
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Validation rapide -->
+                        <div th:if="${task.status != 'COMPLETED'}" class="mb-3">
+                            <form th:action="@{/tasks/{id}/validate(id=${task.id})}" method="post">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-check-lg"></i> Marquer comme terminée
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Suppression -->
+                        <div class="mb-3">
+                            <form th:action="@{/tasks/{id}/delete(id=${task.id})}" method="post">
+                                <button type="submit" class="btn btn-danger w-100"
+                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statistiques -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Statistiques</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Durée depuis création :</strong></p>
+                        <p class="text-muted">
+                            <span th:if="${task.createdAt != null}">
+                                Créée récemment
+                            </span>
+                            <span th:unless="${task.createdAt != null}">
+                                Date de création non disponible
+                            </span>
+                        </p>
+                        
+                        <p th:if="${task.dueDate != null}"><strong>Échéance :</strong></p>
+                        <p th:if="${task.dueDate != null}" class="text-muted">
+                            <span th:text="${#temporals.format(task.dueDate, 'dd/MM/yyyy')}">Date</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

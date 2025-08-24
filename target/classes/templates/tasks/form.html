@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${task.id != null ? 'Modifier la tâche' : 'Nouvelle tâche'}">Formulaire tâche</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 th:text="${task.id != null ? 'Modifier la tâche' : 'Nouvelle tâche'}">Formulaire tâche</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Messages d'erreur -->
+                        <div th:if="${error}" class="alert alert-danger" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <span th:text="${error}">Erreur</span>
+                        </div>
+                        
+                        <!-- Formulaire -->
+                        <form th:action="${task.id != null ? '/tasks/' + task.id : '/tasks'}" 
+                              th:object="${task}" method="post">
+                            
+                            <!-- Titre -->
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Titre *</label>
+                                <input type="text" class="form-control" id="title" 
+                                       th:field="*{title}" required 
+                                       placeholder="Entrez le titre de la tâche">
+                            </div>
+                            
+                            <!-- Description -->
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3"
+                                          th:field="*{description}" 
+                                          placeholder="Décrivez la tâche"></textarea>
+                            </div>
+                            
+                            <!-- Utilisateur assigné -->
+                            <div class="mb-3">
+                                <label for="userId" class="form-label">Utilisateur assigné *</label>
+                                <select class="form-select" id="userId" name="userId" required>
+                                    <option value="">Sélectionnez un utilisateur</option>
+                                    <option th:each="user : ${users}" 
+                                            th:value="${user.id}" 
+                                            th:text="${user.fullName}"
+                                            th:selected="${task.user != null and task.user.id == user.id}">
+                                        Utilisateur
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <!-- Priorité -->
+                            <div class="mb-3">
+                                <label for="priority" class="form-label">Priorité</label>
+                                <select class="form-select" id="priority" th:field="*{priority}">
+                                    <option th:each="priority : ${priorities}" 
+                                            th:value="${priority}" 
+                                            th:text="${priority.displayName}"
+                                            th:selected="${task.priority == priority}">
+                                        Priorité
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <!-- Statut -->
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Statut</label>
+                                <select class="form-select" id="status" th:field="*{status}">
+                                    <option th:each="status : ${statuses}" 
+                                            th:value="${status}" 
+                                            th:text="${status.displayName}"
+                                            th:selected="${task.status == status}">
+                                        Statut
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <!-- Date d'échéance -->
+                            <div class="mb-3">
+                                <label for="dueDate" class="form-label">Date d'échéance</label>
+                                <input type="datetime-local" class="form-control" id="dueDate" 
+                                       th:field="*{dueDate}">
+                            </div>
+                            
+                            <!-- Boutons -->
+                            <div class="d-flex justify-content-between">
+                                <a th:href="@{/tasks}" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Retour
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle"></i>
+                                    <span th:text="${task.id != null ? 'Mettre à jour' : 'Créer'}">Sauvegarder</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

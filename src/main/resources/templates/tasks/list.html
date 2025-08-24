@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Liste des tâches</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Liste des tâches</h1>
+            <div>
+                <a href="/" class="btn btn-secondary me-2">
+                    <i class="bi bi-house"></i> Accueil
+                </a>
+                <a href="/tasks/new" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Nouvelle tâche
+                </a>
+            </div>
+        </div>
+        
+        <!-- Messages de succès/erreur -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <span th:text="${success}">Succès</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span th:text="${error}">Erreur</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- Tableau des tâches -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Description</th>
+                                <th>Statut</th>
+                                <th>Priorité</th>
+                                <th>Utilisateur</th>
+                                <th>Échéance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="task : ${tasks}">
+                                <td th:text="${task.id}">1</td>
+                                <td th:text="${task.title}">Titre</td>
+                                <td>
+                                    <span th:text="${#strings.abbreviate(task.description, 50)}" 
+                                          th:title="${task.description}">Description</span>
+                                </td>
+                                <td>
+                                    <span th:class="${'badge ' + 
+                                        (task.status == 'COMPLETED' ? 'bg-success' : 
+                                         task.status == 'IN_PROGRESS' ? 'bg-warning' : 
+                                         task.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary')}"
+                                          th:text="${task.status.displayName}">En attente</span>
+                                </td>
+                                <td>
+                                    <span th:class="${'badge ' + 
+                                        (task.priority == 'URGENT' ? 'bg-danger' : 
+                                         task.priority == 'HIGH' ? 'bg-warning' : 
+                                         task.priority == 'MEDIUM' ? 'bg-info' : 'bg-secondary')}"
+                                          th:text="${task.priority.displayName}">Moyenne</span>
+                                </td>
+                                <td th:text="${task.user.fullName}">Utilisateur</td>
+                                <td>
+                                    <span th:if="${task.dueDate != null}" 
+                                          th:text="${#temporals.format(task.dueDate, 'dd/MM/yyyy HH:mm')}">Échéance</span>
+                                    <span th:unless="${task.dueDate != null}" class="text-muted">Non définie</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <!-- Voir -->
+                                        <a th:href="@{/tasks/{id}(id=${task.id})}" 
+                                           class="btn btn-sm btn-info" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        
+                                        <!-- Modifier -->
+                                        <a th:href="@{/tasks/{id}/edit(id=${task.id})}" 
+                                           class="btn btn-sm btn-warning" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        
+                                        <!-- Valider (si pas terminée) -->
+                                        <form th:if="${task.status != 'COMPLETED'}" 
+                                              th:action="@{/tasks/{id}/validate(id=${task.id})}" 
+                                              method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-success" 
+                                                    title="Marquer comme terminée"
+                                                    onclick="return confirm('Marquer cette tâche comme terminée ?')">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <!-- Supprimer -->
+                                        <form th:action="@{/tasks/{id}/delete(id=${task.id})}" 
+                                              method="post" style="display: inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" 
+                                                    title="Supprimer"
+                                                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Message si aucune tâche -->
+                <div th:if="${#lists.isEmpty(tasks)}" class="text-center py-4">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <h4 class="text-muted mt-3">Aucune tâche trouvée</h4>
+                    <p class="text-muted">Commencez par créer votre première tâche !</p>
+                    <a href="/tasks/new" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Créer une tâche
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
